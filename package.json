@@ -2,6 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "[![Actions Status](https://github.com/csmcgrl/frontend-project-11/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/csmcgrl/frontend-project-11/actions)",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
