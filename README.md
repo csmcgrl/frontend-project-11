@@ -1,15 +1,21 @@
-# 🚀 Welcome to your new awesome project!
+# RSS-reader
 
-This project has been created using **webpack-cli**, you can now run
+#RSS-reader-hexlet / - JavaScript + Webpack - Third project for Hexlet.io
+Проект "RSS"
 
-```
-npm run build
-```
+## Tech stack
 
-or
+- Java Script
+- Axios
+- i18next
+- Webpack
+- Yup Validate
 
-```
-yarn build
-```
+### Hexlet tests and linter status:
 
-to bundle your application
+[![Actions Status](https://github.com/csmcgrl/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/csmcgrl/frontend-project-11/actions)
+
+[![Maintainability](https://api.codeclimate.com/v1/badges/136093cf3f0e89b32e50/maintainability)](https://codeclimate.com/github/csmcgrl/frontend-project-11/maintainability)
+
+Deploy:
+https://frontend-project-11-ivory-nine.vercel.app/
