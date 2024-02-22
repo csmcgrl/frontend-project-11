@@ -10,7 +10,7 @@ env:
   jest: true
   browser: true
 
-parser: '@babel/eslint-parser'
+parser: 'react-scripts/node_modules/babel-eslint'
 
 extends:
   - 'airbnb-base'
