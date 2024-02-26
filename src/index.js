@@ -2,21 +2,37 @@
 import '../main.css';
 import * as yup from 'yup';
 
-let schema = yup.string().url();
+const schema = yup.string().url();
+
 const form = document.querySelector('form');
+const input = document.getElementById('url-input');
+const feedback = document.getElementsByClassName('feedback')[0];
+const feedHistory = [];
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
 
-  const input = document.getElementById('url-input').value;
+  const inputValue = document.getElementById('url-input').value;
+
   // Проверяем, соответствует ли введенное значение схеме валидации
-  schema.isValid(input).then((valid) => {
+  schema.isValid(inputValue).then((valid) => {
     if (valid) {
-      alert('Введенный URL адрес корректен');
-      // Вы можете сделать что-то еще, если URL адрес корректен
+      if (feedHistory.includes(inputValue)) {
+        feedback.textContent = 'RSS уже существует';
+        feedback.classList.add('text-danger');
+      } else {
+        feedHistory.push(inputValue);
+        feedback.classList.remove('text-danger');
+        feedback.classList.add('text-success');
+        input.classList.remove('is-invalid');
+        feedback.textContent = 'RSS успешно загружен';
+        input.value = '';
+        input.focus();
+      }
     } else {
-      alert('Неверный URL адрес');
-      // Вы можете сделать что-то еще, если URL адрес неверный
+      feedback.textContent = 'Ссылка должна быть валидным URL';
+      input.classList.add('is-invalid');
+      feedback.classList.add('text-danger');
     }
   });
   // .catch((error) => {
