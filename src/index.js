@@ -1,41 +1,43 @@
-// import 'bootstrap';
 import '../main.css';
 import * as yup from 'yup';
+import watchedState from './view.js';
 
 const schema = yup.string().url();
-
 const form = document.querySelector('form');
 const input = document.getElementById('url-input');
-const feedback = document.getElementsByClassName('feedback')[0];
 const feedHistory = [];
+
+// Обработка ввода
+const handleInput = (inputValue) => {
+  if (feedHistory.includes(inputValue)) {
+    watchedState.feedbackMessage = 'RSS уже существует';
+    watchedState.feedbackClassName = 'text-danger';
+  } else {
+    feedHistory.push(inputValue);
+    watchedState.feedbackMessage = 'RSS успешно загружен';
+    watchedState.feedbackClassName = 'text-success';
+    watchedState.inputIsValid = true;
+    input.value = '';
+    input.focus();
+  }
+};
+
+// Обработка невалидного ввода
+const handleInvalidInput = () => {
+  watchedState.feedbackMessage = 'Ссылка должна быть валидным URL';
+  watchedState.feedbackClassName = 'text-danger';
+  watchedState.inputIsValid = false;
+};
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
+  const inputValue = input.value;
 
-  const inputValue = document.getElementById('url-input').value;
-
-  // Проверяем, соответствует ли введенное значение схеме валидации
   schema.isValid(inputValue).then((valid) => {
     if (valid) {
-      if (feedHistory.includes(inputValue)) {
-        feedback.textContent = 'RSS уже существует';
-        feedback.classList.add('text-danger');
-      } else {
-        feedHistory.push(inputValue);
-        feedback.classList.remove('text-danger');
-        feedback.classList.add('text-success');
-        input.classList.remove('is-invalid');
-        feedback.textContent = 'RSS успешно загружен';
-        input.value = '';
-        input.focus();
-      }
+      handleInput(inputValue);
     } else {
-      feedback.textContent = 'Ссылка должна быть валидным URL';
-      input.classList.add('is-invalid');
-      feedback.classList.add('text-danger');
+      handleInvalidInput();
     }
   });
-  // .catch((error) => {
-  //   console.log(error); // Обработка ошибки, если что-то пошло не так
-  // });
 });
