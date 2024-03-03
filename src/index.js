@@ -1,32 +1,36 @@
 import '../main.css';
 import * as yup from 'yup';
 import watchedState from './view.js';
+import i18next from 'i18next';
 
 const schema = yup.string().url();
 const form = document.querySelector('form');
 const input = document.getElementById('url-input');
 const feedHistory = [];
 
-// Обработка ввода
+yup.setLocale({
+  invalid: i18next.t('1'),
+  duplicate: i18next.t('2'),
+});
+
 const handleInput = (inputValue) => {
   if (feedHistory.includes(inputValue)) {
-    watchedState.feedbackMessage = 'RSS уже существует';
+    watchedState.errorCode = 2;
     watchedState.feedbackClassName = 'text-danger';
   } else {
     feedHistory.push(inputValue);
-    watchedState.feedbackMessage = 'RSS успешно загружен';
+    watchedState.errorCode = 0;
     watchedState.feedbackClassName = 'text-success';
-    watchedState.inputIsValid = true;
+    watchedState.isInputValid = true;
     input.value = '';
     input.focus();
   }
 };
 
-// Обработка невалидного ввода
 const handleInvalidInput = () => {
-  watchedState.feedbackMessage = 'Ссылка должна быть валидным URL';
+  watchedState.errorCode = 1;
   watchedState.feedbackClassName = 'text-danger';
-  watchedState.inputIsValid = false;
+  watchedState.isInputValid = false;
 };
 
 form.addEventListener('submit', function (e) {

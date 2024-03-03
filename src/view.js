@@ -1,33 +1,42 @@
 import onChange from 'on-change';
+import i18next from 'i18next';
 
-// Получение элементов из DOM
 const input = document.getElementById('url-input');
 const feedback = document.getElementsByClassName('feedback')[0];
 
-// Определение объекта состояния
 const state = {
-  feedbackMessage: '',
-  feedbackClassName: '',
-  inputIsValid: false,
+  errorCode: 1,
+  isInputValid: false,
 };
 
-// Функция рендеринга, обновляющая пользовательский интерфейс
-const render = () => {
-  feedback.textContent = state.feedbackMessage;
-  feedback.classList.remove('text-danger');
-  state.feedbackClassName
-    ? feedback.classList.add(state.feedbackClassName)
-    : null;
+i18next.init({
+  lng: 'ru',
+  debug: true,
+  resources: {
+    ru: {
+      translation: {
+        0: 'RSS успешно загружен',
+        1: 'Ссылка должна быть валидным URL',
+        2: 'RSS уже существует',
+      },
+    },
+  },
+});
 
-  //feedback.className = `${state.feedbackClassName}`;
+const render = () => {
+  feedback.textContent = i18next.t(`${state.errorCode}`);
+  feedback.classList.remove('text-danger');
+
+  state.errorCode === 0
+    ? feedback.classList.add('text-success')
+    : feedback.classList.add('text-danger');
+
   input.classList.remove('is-invalid');
-  if (!state.inputIsValid) {
+  if (!state.isInputValid) {
     input.classList.add('is-invalid');
   }
 };
 
-// Создание прослушивателя изменений состояния
 const watchedState = onChange(state, render);
 
-// Экспорт объекта watchedState
 export default watchedState;
