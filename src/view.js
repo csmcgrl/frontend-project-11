@@ -1,12 +1,12 @@
 import onChange from 'on-change';
 import i18next from 'i18next';
+import { input } from './index.js';
 
-const input = document.getElementById('url-input');
 const feedback = document.getElementsByClassName('feedback')[0];
 
 const state = {
-  errorCode: 1,
-  isInputValid: false,
+  errorCode: null,
+  isInputValid: undefined,
 };
 
 i18next.init({

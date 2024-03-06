@@ -5,22 +5,21 @@ import i18next from 'i18next';
 
 const schema = yup.string().url();
 const form = document.querySelector('form');
-const input = document.getElementById('url-input');
+export const input = document.getElementById('url-input');
 const feedHistory = [];
 
-yup.setLocale({
-  invalid: i18next.t('1'),
-  duplicate: i18next.t('2'),
-});
+// yup.setLocale({
+//   invalid: i18next.t('1'),
+//   duplicate: i18next.t('2'),
+// });
 
 const handleInput = (inputValue) => {
   if (feedHistory.includes(inputValue)) {
     watchedState.errorCode = 2;
-    watchedState.feedbackClassName = 'text-danger';
+    watchedState.isInputValid = false;
   } else {
     feedHistory.push(inputValue);
     watchedState.errorCode = 0;
-    watchedState.feedbackClassName = 'text-success';
     watchedState.isInputValid = true;
     input.value = '';
     input.focus();
@@ -29,7 +28,6 @@ const handleInput = (inputValue) => {
 
 const handleInvalidInput = () => {
   watchedState.errorCode = 1;
-  watchedState.feedbackClassName = 'text-danger';
   watchedState.isInputValid = false;
 };
 
