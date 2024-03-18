@@ -6,6 +6,7 @@ import i18next from 'i18next';
 const schema = yup.string().url();
 const form = document.querySelector('form');
 export const input = document.getElementById('url-input');
+const displayPosts = document.getElementsByClassName('posts')[0];
 const feedHistory = [];
 
 // yup.setLocale({
@@ -23,6 +24,21 @@ const handleInput = (inputValue) => {
     watchedState.isInputValid = true;
     input.value = '';
     input.focus();
+
+    fetch(
+      `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(inputValue)}`
+    )
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw new Error('Network response was not ok.');
+      })
+      .then((data) => {
+        //console.log(data.contents, typeof data.contents)); //нужно распарсить data.contents
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
+        displayPosts.innerHTML = doc.body.innerHTML;
+        //console.log(doc.body);
+      });
   }
 };
 
