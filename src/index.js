@@ -33,11 +33,21 @@ const handleInput = (inputValue) => {
         throw new Error('Network response was not ok.');
       })
       .then((data) => {
-        //console.log(data.contents, typeof data.contents)); //нужно распарсить data.contents
+        const postsList = createPosts();
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
-        displayPosts.innerHTML = doc.body.innerHTML;
-        //console.log(doc.body);
+        const items = doc.body.getElementsByTagName('item');
+        let id = 1;
+        for (let item of items) {
+          const title = item.querySelector('title');
+          const link = item.querySelector('guid').textContent;
+          const extractedText = title.textContent
+            .replace('<![CDATA[', '')
+            .replace(']]>', '');
+          let listItem = createOnePost(id, link, extractedText);
+          postsList.appendChild(listItem);
+          id++;
+        }
       });
   }
 };
@@ -59,3 +69,55 @@ form.addEventListener('submit', function (e) {
     }
   });
 });
+
+//Создаем на странице посты и фиды
+const createPosts = () => {
+  const postsContainer = document.createElement('div');
+  postsContainer.classList.add('card', 'border-0');
+  displayPosts.appendChild(postsContainer);
+
+  const postsTitle = document.createElement('div');
+  postsTitle.classList.add('card-body');
+  postsTitle.innerHTML = '<h2 class="card-title h4">Посты</h2>';
+  postsContainer.appendChild(postsTitle);
+
+  const postsList = document.createElement('ul');
+  postsList.classList.add('list-group', 'border-0', 'rounded-0');
+  postsContainer.appendChild(postsList);
+
+  return postsList;
+};
+
+//функция для создания одного элемента списка постов
+const createOnePost = (id, url, textContent) => {
+  const listItem = document.createElement('li');
+  listItem.classList.add(
+    'list-group-item',
+    'd-flex',
+    'justify-content-between',
+    'align-items-start',
+    'border-0',
+    'border-end-0'
+  );
+
+  const link = document.createElement('a');
+  link.classList.add('fw-bold');
+  link.href = url;
+  link.setAttribute('data-id', id);
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = textContent;
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+  button.setAttribute('data-id', id);
+  button.setAttribute('data-bs-toggle', 'modal');
+  button.setAttribute('data-bs-target', '#modal');
+  button.textContent = 'Просмотр';
+
+  listItem.appendChild(link);
+  listItem.appendChild(button);
+
+  return listItem;
+};
