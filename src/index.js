@@ -34,8 +34,23 @@ const handleInput = (inputValue) => {
         throw new Error('Network response was not ok.');
       })
       .then((data) => {
-        const postsList = createContainer('Посты', displayPosts);
-        const feedsList = createContainer('Фиды', displayFeeds);
+        let postsList;
+        let feedsList;
+
+        if (
+          displayPosts.childNodes.length === 0 &&
+          displayFeeds.childNodes.length === 0
+        ) {
+          postsList = createContainer('Посты', displayPosts);
+          feedsList = createContainer('Фиды', displayFeeds);
+        } else {
+          postsList = document.querySelectorAll(
+            'ul.list-group.border-0.rounded-0'
+          )[0];
+          feedsList = document.querySelectorAll(
+            'ul.list-group.border-0.rounded-0'
+          )[1];
+        }
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
@@ -45,11 +60,9 @@ const handleInput = (inputValue) => {
 
         const feedDesc = doc.querySelector('description');
         const extractedFeedDesc = feedDesc.childNodes[0].nodeValue;
-        console.log(feedDesc);
-        console.log(extractedFeedDesc);
 
-        const feedsItem = createFeeds(extractedFeed);
-        feedsList.appendChild(feedsItem);
+        const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
+        feedsList.prepend(feedsItem);
 
         const items = doc.body.getElementsByTagName('item');
         let id = 1;
@@ -58,7 +71,7 @@ const handleInput = (inputValue) => {
           const link = item.querySelector('guid').textContent;
           const extractedText = extractCdataContent(title);
           let listItem = createOnePost(id, link, extractedText);
-          postsList.appendChild(listItem);
+          postsList.prepend(listItem);
           id++;
         }
       });
@@ -138,7 +151,7 @@ const createOnePost = (id, url, textContent) => {
   return listItem;
 };
 
-const createFeeds = (firstText) => {
+const createFeeds = (firstText, secondText) => {
   const listItem = document.createElement('li');
   listItem.classList.add('list-group-item', 'border-0', 'border-end-0');
 
@@ -148,8 +161,7 @@ const createFeeds = (firstText) => {
 
   const descriptionText = document.createElement('p');
   descriptionText.classList.add('m-0', 'small', 'text-black-50');
-  descriptionText.textContent =
-    'This is a constantly updating lorem ipsum feed';
+  descriptionText.textContent = secondText;
 
   listItem.append(descriptionTitle, descriptionText);
 
