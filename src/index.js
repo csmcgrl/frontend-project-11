@@ -1,19 +1,28 @@
 import '../main.css';
 import * as yup from 'yup';
 import watchedState from './view.js';
-import i18next from 'i18next';
 
-const schema = yup.string().url();
 const form = document.querySelector('form');
 export const input = document.getElementById('url-input');
-const displayPosts = document.getElementsByClassName('posts')[0];
-const displayFeeds = document.getElementsByClassName('feeds')[0];
-const feedHistory = [];
+const postsSection = document.getElementsByClassName('posts')[0];
+const feedsSection = document.getElementsByClassName('feeds')[0];
 
-// yup.setLocale({
-//   invalid: i18next.t('1'),
-//   duplicate: i18next.t('2'),
-// });
+const feedHistory = [];
+const schema = yup.string().url();
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const inputValue = input.value;
+  schema.isValid(inputValue).then((valid) => {
+    if (valid) {
+      console.log('Я валидный');
+      handleInput(inputValue);
+    } else {
+      handleInvalidInput();
+    }
+  });
+});
 
 const handleInput = (inputValue) => {
   if (feedHistory.includes(inputValue)) {
@@ -21,10 +30,6 @@ const handleInput = (inputValue) => {
     watchedState.isInputValid = false;
   } else {
     feedHistory.push(inputValue);
-    watchedState.errorCode = 0;
-    watchedState.isInputValid = true;
-    input.value = '';
-    input.focus();
 
     fetch(
       `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(inputValue)}`
@@ -34,52 +39,58 @@ const handleInput = (inputValue) => {
         throw new Error('Network response was not ok.');
       })
       .then((data) => {
-        let postsList;
-        let feedsList;
-
-        if (
-          displayPosts.childNodes.length === 0 &&
-          displayFeeds.childNodes.length === 0
-        ) {
-          postsList = createContainer('Посты', displayPosts);
-          feedsList = createContainer('Фиды', displayFeeds);
-        } else {
-          postsList = document.querySelectorAll(
-            'ul.list-group.border-0.rounded-0'
-          )[0];
-          feedsList = document.querySelectorAll(
-            'ul.list-group.border-0.rounded-0'
-          )[1];
-        }
-
         const parser = new DOMParser();
         const doc = parser.parseFromString(data.contents, 'text/html');
+        const rssLinks = doc.getElementsByTagName('rss');
+        if (rssLinks.length === 0) {
+          watchedState.errorCode = 3;
+          watchedState.isInputValid = true;
+        } else {
+          watchedState.errorCode = 0;
+          watchedState.isInputValid = true;
+          input.value = '';
+          input.focus();
 
-        const feedTitle = doc.querySelector('title');
-        const extractedFeed = extractCdataContent(feedTitle);
+          let postsList;
+          let feedsList;
 
-        const feedDesc = doc.querySelector('description');
-        const extractedFeedDesc = feedDesc.childNodes[0].nodeValue;
+          if (
+            postsSection.childNodes.length === 0 &&
+            feedsSection.childNodes.length === 0
+          ) {
+            postsList = createContainer('Посты', postsSection);
+            feedsList = createContainer('Фиды', feedsSection);
+          } else {
+            postsList = document.querySelectorAll(
+              'ul.list-group.border-0.rounded-0'
+            )[0];
+            feedsList = document.querySelectorAll(
+              'ul.list-group.border-0.rounded-0'
+            )[1];
+          }
 
-        const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
-        feedsList.prepend(feedsItem);
+          const feedTitle = doc.querySelector('title');
+          const extractedFeed = extractCdataContent(feedTitle);
 
-        const items = doc.body.getElementsByTagName('item');
-        let id = 1;
-        for (let item of items) {
-          const title = item.querySelector('title');
-          const link = item.querySelector('guid').textContent;
-          const extractedText = extractCdataContent(title);
-          let listItem = createOnePost(id, link, extractedText);
-          postsList.prepend(listItem);
-          id++;
+          const feedDesc = doc.querySelector('description');
+          const extractedFeedDesc = extractCdataContent(feedDesc.childNodes[0]);
+
+          const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
+          feedsList.prepend(feedsItem);
+
+          const items = doc.body.getElementsByTagName('item');
+          let id = 1;
+          for (let item of items) {
+            const title = item.querySelector('title');
+            const link = item.querySelector('guid').textContent;
+            const extractedText = extractCdataContent(title);
+            let listItem = createOnePost(id, link, extractedText);
+            postsList.prepend(listItem);
+            id++;
+          }
         }
       });
   }
-};
-
-const extractCdataContent = (cdata) => {
-  return cdata.textContent.replace('<![CDATA[', '').replace(']]>', '');
 };
 
 const handleInvalidInput = () => {
@@ -87,18 +98,13 @@ const handleInvalidInput = () => {
   watchedState.isInputValid = false;
 };
 
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  const inputValue = input.value;
-
-  schema.isValid(inputValue).then((valid) => {
-    if (valid) {
-      handleInput(inputValue);
-    } else {
-      handleInvalidInput();
-    }
-  });
-});
+const extractCdataContent = (cdata) => {
+  return cdata.textContent
+    .replace('<![CDATA[', '')
+    .replace(']]>', '')
+    .replace(']]', '')
+    .replace('[CDATA[', '');
+};
 
 const createContainer = (containerName, display) => {
   const container = document.createElement('div');
@@ -117,7 +123,6 @@ const createContainer = (containerName, display) => {
   return list;
 };
 
-//функция для создания одного элемента списка постов
 const createOnePost = (id, url, textContent) => {
   const listItem = document.createElement('li');
   listItem.classList.add(
