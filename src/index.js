@@ -10,6 +10,8 @@ const feedsSection = document.getElementsByClassName('feeds')[0];
 const feedHistory = [];
 const schema = yup.string().url();
 
+let postsLength = 0;
+
 form.addEventListener('submit', function (e) {
   e.preventDefault();
 
@@ -29,10 +31,34 @@ const handleInput = (inputValue) => {
     watchedState.isInputValid = false;
   } else {
     feedHistory.push(inputValue);
-    fetchData(inputValue).then(parseData).then(handleData);
+    fetchData(inputValue)
+      .then(parseData)
+      .then(handleData)
+      .then((length) => {
+        postsLength = length;
+      });
+    doSomethingRepeatedly(inputValue);
   }
 };
-
+function doSomethingRepeatedly(inputValue) {
+  setTimeout(() => {
+    fetchData(inputValue).then(parseData).then(checkNewPosts);
+    doSomethingRepeatedly(inputValue);
+  }, 5000);
+}
+const checkNewPosts = (doc) => {
+  console.log(
+    'Старое кол-во ',
+    postsLength,
+    ' и мой заголовок ',
+    doc.feedTitle,
+    ' Новое кол-во ',
+    doc.items.length
+  );
+  if (doc.items.length > postsLength) {
+    console.log('теперь больше');
+  }
+};
 const fetchData = (inputValue) => {
   return fetch(
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(inputValue)}`
@@ -80,6 +106,7 @@ const renderPosts = (items) => {
     postsList.prepend(listItem);
     id++;
   });
+  return items.length;
 };
 const renderFeeds = (feedTitle, feedDescription) => {
   let feedsList;
@@ -105,8 +132,9 @@ const handleData = (doc) => {
     watchedState.isInputValid = true;
     input.value = '';
     input.focus();
-    renderPosts(doc.items);
+    const length = renderPosts(doc.items);
     renderFeeds(doc.feedTitle, doc.feedDescription);
+    return length;
   }
 };
 
