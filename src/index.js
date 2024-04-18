@@ -8,9 +8,8 @@ const postsSection = document.getElementsByClassName('posts')[0];
 const feedsSection = document.getElementsByClassName('feeds')[0];
 
 const feedHistory = [];
+const postState = [];
 const schema = yup.string().url();
-
-let postsLength = 0;
 
 form.addEventListener('submit', function (e) {
   e.preventDefault();
@@ -35,30 +34,34 @@ const handleInput = (inputValue) => {
       .then(parseData)
       .then(handleData)
       .then((length) => {
-        postsLength = length;
+        updatePosts(inputValue, length);
       });
-    doSomethingRepeatedly(inputValue);
   }
 };
-function doSomethingRepeatedly(inputValue) {
-  setTimeout(() => {
-    fetchData(inputValue).then(parseData).then(checkNewPosts);
-    doSomethingRepeatedly(inputValue);
-  }, 5000);
-}
-const checkNewPosts = (doc) => {
-  console.log(
-    'Старое кол-во ',
-    postsLength,
-    ' и мой заголовок ',
-    doc.feedTitle,
-    ' Новое кол-во ',
-    doc.items.length
-  );
-  if (doc.items.length > postsLength) {
-    console.log('теперь больше');
-  }
+const updatePosts = (link, length) => {
+  const postItem = {};
+  postItem.link = link;
+  postItem.length = length;
+  postState.push(postItem);
 };
+
+setTimeout(function repeat() {
+  console.log('я родился');
+  postState.map((item) => {
+    fetchData(item.link)
+      .then(parseData)
+      .then((doc) => {
+        console.log(
+          'старая длина ',
+          item.length,
+          ' новая длина ',
+          doc.items.length
+        );
+      });
+  });
+  setTimeout(repeat, 5000);
+}, 0);
+
 const fetchData = (inputValue) => {
   return fetch(
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(inputValue)}`
@@ -132,6 +135,7 @@ const handleData = (doc) => {
     watchedState.isInputValid = true;
     input.value = '';
     input.focus();
+
     const length = renderPosts(doc.items);
     renderFeeds(doc.feedTitle, doc.feedDescription);
     return length;
