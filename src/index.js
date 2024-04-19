@@ -57,12 +57,18 @@ setTimeout(function repeat() {
           ' новая длина ',
           doc.items.length
         );
+        if (item.length < doc.items.length) {
+          const diff = doc.items.length - item.length;
+          const newItems = doc.items.splice(item.length + 1, diff);
+          renderPosts(newItems);
+        }
       });
   });
   setTimeout(repeat, 5000);
 }, 0);
 
 const fetchData = (inputValue) => {
+  console.log('запрос отправил на ', inputValue);
   return fetch(
     `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(inputValue)}`
   ).then((response) => {
@@ -138,6 +144,7 @@ const handleData = (doc) => {
 
     const length = renderPosts(doc.items);
     renderFeeds(doc.feedTitle, doc.feedDescription);
+    attachEventListeners();
     return length;
   }
 };
@@ -221,4 +228,20 @@ const handleInvalidInput = (code) => {
   console.log(code);
   watchedState.errorCode = code;
   watchedState.isInputValid = false;
+};
+
+const attachEventListeners = () => {
+  const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
+  modalButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const buttonId = button.getAttribute('data-id');
+
+      const postTitle = document.querySelector(`[data-id="${buttonId}"]`);
+
+      console.log(postTitle);
+      postTitle.classList.remove('fw-bold');
+      postTitle.classList.add('fw-normal', 'link-secondary');
+      console.log('Привет');
+    });
+  });
 };
