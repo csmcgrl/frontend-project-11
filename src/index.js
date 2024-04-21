@@ -1,6 +1,7 @@
 import '../main.css';
 import * as yup from 'yup';
 import watchedState from './view.js';
+import { Modal } from 'bootstrap';
 
 const form = document.querySelector('form');
 export const input = document.getElementById('url-input');
@@ -45,27 +46,27 @@ const updatePosts = (link, length) => {
   postState.push(postItem);
 };
 
-setTimeout(function repeat() {
-  console.log('я родился');
-  postState.map((item) => {
-    fetchData(item.link)
-      .then(parseData)
-      .then((doc) => {
-        console.log(
-          'старая длина ',
-          item.length,
-          ' новая длина ',
-          doc.items.length
-        );
-        if (item.length < doc.items.length) {
-          const diff = doc.items.length - item.length;
-          const newItems = doc.items.splice(item.length + 1, diff);
-          renderPosts(newItems);
-        }
-      });
-  });
-  setTimeout(repeat, 5000);
-}, 0);
+// setTimeout(function repeat() {
+//   console.log('я родился');
+//   postState.map((item) => {
+//     fetchData(item.link)
+//       .then(parseData)
+//       .then((doc) => {
+//         console.log(
+//           'старая длина ',
+//           item.length,
+//           ' новая длина ',
+//           doc.items.length
+//         );
+//         if (item.length < doc.items.length) {
+//           const diff = doc.items.length - item.length;
+//           const newItems = doc.items.splice(item.length + 1, diff);
+//           renderPosts(newItems);
+//         }
+//       });
+//   });
+//   setTimeout(repeat, 5000);
+// }, 0);
 
 const fetchData = (inputValue) => {
   console.log('запрос отправил на ', inputValue);
@@ -95,6 +96,7 @@ const parseData = (data) => {
     items: Array.from(doc.body.getElementsByTagName('item')).map((item) => ({
       title: item.querySelector('title').textContent,
       link: item.querySelector('guid').textContent,
+      description: item.querySelector('description').childNodes[0].textContent,
     })),
   };
 };
@@ -108,7 +110,7 @@ const renderPosts = (items) => {
       'ul.list-group.border-0.rounded-0'
     )[0];
   }
-  let id = 1;
+  let id = 0;
   items.map((item) => {
     const extractedText = extractCdataContent(item.title);
     let listItem = createOnePost(id, item.link, extractedText);
@@ -144,7 +146,7 @@ const handleData = (doc) => {
 
     const length = renderPosts(doc.items);
     renderFeeds(doc.feedTitle, doc.feedDescription);
-    attachEventListeners();
+    attachEventListeners(doc.items);
     return length;
   }
 };
@@ -230,7 +232,8 @@ const handleInvalidInput = (code) => {
   watchedState.isInputValid = false;
 };
 
-const attachEventListeners = () => {
+const attachEventListeners = (items) => {
+  console.log(items);
   const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
   modalButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -238,10 +241,17 @@ const attachEventListeners = () => {
 
       const postTitle = document.querySelector(`[data-id="${buttonId}"]`);
 
-      console.log(postTitle);
       postTitle.classList.remove('fw-bold');
       postTitle.classList.add('fw-normal', 'link-secondary');
-      console.log('Привет');
+      const myModal = new Modal(document.getElementById('modal'));
+
+      const modalTitle = document.querySelector('.modal-title');
+      const modalBody = document.querySelector('.modal-body');
+
+      modalTitle.textContent = postTitle.textContent;
+      modalBody.textContent = extractCdataContent(items[buttonId].description);
+
+      myModal.show();
     });
   });
 };
