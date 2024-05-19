@@ -252,6 +252,17 @@ const attachEventListeners = (items) => {
       modalBody.textContent = extractCdataContent(items[buttonId].description);
 
       myModal.show();
+
+      const backdrops = document.querySelectorAll(
+        'div.modal-backdrop.fade.show'
+      );
+
+      if (backdrops.length > 1) {
+        backdrops[0].remove();
+      }
+      document.addEventListener('hidden.bs.modal', function (event) {
+        document.body.style = '';
+      });
     });
   });
 };
