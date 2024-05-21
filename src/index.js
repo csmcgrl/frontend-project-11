@@ -46,28 +46,6 @@ const updatePosts = (link, length) => {
   postState.push(postItem);
 };
 
-// setTimeout(function repeat() {
-//   console.log('я родился');
-//   postState.map((item) => {
-//     fetchData(item.link)
-//       .then(parseData)
-//       .then((doc) => {
-//         console.log(
-//           'старая длина ',
-//           item.length,
-//           ' новая длина ',
-//           doc.items.length
-//         );
-//         if (item.length < doc.items.length) {
-//           const diff = doc.items.length - item.length;
-//           const newItems = doc.items.splice(item.length + 1, diff);
-//           renderPosts(newItems);
-//         }
-//       });
-//   });
-//   setTimeout(repeat, 5000);
-// }, 0);
-
 const fetchData = (inputValue) => {
   console.log('запрос отправил на ', inputValue);
   return fetch(
@@ -102,14 +80,8 @@ const parseData = (data) => {
 };
 
 const renderPosts = (items) => {
-  let postsList;
-  if (postsSection.childNodes.length === 0) {
-    postsList = createContainer('Посты', postsSection);
-  } else {
-    postsList = document.querySelectorAll(
-      'ul.list-group.border-0.rounded-0'
-    )[0];
-  }
+  let postsList = makeList(postsSection, 'Посты');
+
   let id = 0;
   items.map((item) => {
     const extractedText = extractCdataContent(item.title);
@@ -120,14 +92,8 @@ const renderPosts = (items) => {
   return items.length;
 };
 const renderFeeds = (feedTitle, feedDescription) => {
-  let feedsList;
-  if (feedsSection.childNodes.length === 0) {
-    feedsList = createContainer('Фиды', feedsSection);
-  } else {
-    feedsList = document.querySelectorAll(
-      'ul.list-group.border-0.rounded-0'
-    )[1];
-  }
+  let feedsList = makeList(feedsSection, 'Фиды');
+
   const extractedFeed = extractCdataContent(feedTitle);
   const extractedFeedDesc = extractCdataContent(feedDescription);
   const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
@@ -186,7 +152,6 @@ const createOnePost = (id, url, textContent) => {
     'border-0',
     'border-end-0'
   );
-
   const link = document.createElement('a');
   link.classList.add('fw-bold');
   link.href = url;
@@ -194,7 +159,6 @@ const createOnePost = (id, url, textContent) => {
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
   link.textContent = textContent;
-
   const button = document.createElement('button');
   button.type = 'button';
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
@@ -202,10 +166,8 @@ const createOnePost = (id, url, textContent) => {
   button.setAttribute('data-bs-toggle', 'modal');
   button.setAttribute('data-bs-target', '#modal');
   button.textContent = 'Просмотр';
-
   listItem.appendChild(link);
   listItem.appendChild(button);
-
   return listItem;
 };
 
@@ -230,6 +192,13 @@ const handleInvalidInput = (code) => {
   console.log(code);
   watchedState.errorCode = code;
   watchedState.isInputValid = false;
+};
+const makeList = (section, name) => {
+  if (section.childNodes.length === 0) {
+    return createContainer(`${name}`, section);
+  } else {
+    return document.querySelectorAll('ul.list-group.border-0.rounded-0')[1];
+  }
 };
 
 const attachEventListeners = (items) => {
