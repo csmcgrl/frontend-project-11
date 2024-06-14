@@ -76,7 +76,7 @@ export default () => {
       const extractedText = extractCdataContent(item.title);
       const listItem = createOnePost(id, item.link, extractedText);
       postsList.prepend(listItem);
-      id += id;
+      id += 1;
     });
     return items.length;
   }
