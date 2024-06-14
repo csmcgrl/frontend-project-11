@@ -16,50 +16,6 @@ export default () => {
   const feedHistory = [];
   const postState = [];
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const inputValue = input.value;
-    validateUrl(feedHistory, inputValue)
-      .then((result) => {
-        if (result instanceof yup.ValidationError) {
-          handleInvalidInput(inputValue);
-        } else {
-          handleInput(inputValue);
-        }
-      })
-      .catch((err) => {
-        console.error('Unhandled validation error:', err);
-      });
-  });
-
-  function handleInput(inputValue) {
-    feedHistory.push(inputValue);
-    fetchData(inputValue)
-      .then(parseData)
-      .then(handleData)
-      .then((length) => {
-        updatePosts(inputValue, length);
-      });
-  }
-
-  function handleInvalidInput(inputValue) {
-    if (feedHistory.includes(inputValue)) {
-      watchedState.errorCode = 2;
-      watchedState.isInputValid = false;
-    } else {
-      watchedState.errorCode = 1;
-      watchedState.isInputValid = false;
-    }
-  }
-
-  function updatePosts(link, length) {
-    const postItem = {};
-    postItem.link = link;
-    postItem.length = length;
-    postState.push(postItem);
-  }
-
   function fetchData(inputValue) {
     const url = buildUrl(inputValue);
     return fetch(url)
@@ -72,28 +28,6 @@ export default () => {
         watchedState.isInputValid = false;
         throw error;
       });
-  }
-
-  function renderPosts(items) {
-    const postsList = makeList(postsSection, 'Посты');
-
-    let id = 0;
-    items.forEach((item) => {
-      const extractedText = extractCdataContent(item.title);
-      const listItem = createOnePost(id, item.link, extractedText);
-      postsList.prepend(listItem);
-      id += 1;
-    });
-    return items.length;
-  }
-
-  function renderFeeds(feedTitle, feedDescription) {
-    const feedsList = makeList(feedsSection, 'Фиды');
-
-    const extractedFeed = extractCdataContent(feedTitle);
-    const extractedFeedDesc = extractCdataContent(feedDescription);
-    const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
-    feedsList.prepend(feedsItem);
   }
 
   function handleData(doc) {
@@ -113,6 +47,14 @@ export default () => {
       return length;
     }
   }
+
+  function updatePosts(link, length) {
+    const postItem = {};
+    postItem.link = link;
+    postItem.length = length;
+    postState.push(postItem);
+  }
+
   function makeList(section, name) {
     if (section.childNodes.length === 0) {
       return createContainer(`${name}`, section);
@@ -132,23 +74,6 @@ export default () => {
       .replace(']]>', '')
       .replace(']]', '')
       .replace('[CDATA[', '');
-  }
-
-  function createContainer(containerName, display) {
-    const container = document.createElement('div');
-    container.classList.add('card', 'border-0');
-    display.appendChild(container);
-
-    const title = document.createElement('div');
-    title.classList.add('card-body');
-    title.innerHTML = `<h2 class="card-title h4">${containerName}</h2>`;
-    container.appendChild(title);
-
-    const list = document.createElement('ul');
-    list.classList.add('list-group', 'border-0', 'rounded-0');
-    container.appendChild(list);
-
-    return list;
   }
 
   function createOnePost(id, url, textContent) {
@@ -197,6 +122,23 @@ export default () => {
     return listItem;
   }
 
+  function createContainer(containerName, display) {
+    const container = document.createElement('div');
+    container.classList.add('card', 'border-0');
+    display.appendChild(container);
+
+    const title = document.createElement('div');
+    title.classList.add('card-body');
+    title.innerHTML = `<h2 class="card-title h4">${containerName}</h2>`;
+    container.appendChild(title);
+
+    const list = document.createElement('ul');
+    list.classList.add('list-group', 'border-0', 'rounded-0');
+    container.appendChild(list);
+
+    return list;
+  }
+
   function attachEventListeners(items) {
     const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
     modalButtons.forEach((button) => {
@@ -232,4 +174,63 @@ export default () => {
       });
     });
   }
+
+  function renderPosts(items) {
+    const postsList = makeList(postsSection, 'Посты');
+
+    let id = 0;
+    items.forEach((item) => {
+      const extractedText = extractCdataContent(item.title);
+      const listItem = createOnePost(id, item.link, extractedText);
+      postsList.prepend(listItem);
+      id += 1;
+    });
+    return items.length;
+  }
+
+  function renderFeeds(feedTitle, feedDescription) {
+    const feedsList = makeList(feedsSection, 'Фиды');
+
+    const extractedFeed = extractCdataContent(feedTitle);
+    const extractedFeedDesc = extractCdataContent(feedDescription);
+    const feedsItem = createFeeds(extractedFeed, extractedFeedDesc);
+    feedsList.prepend(feedsItem);
+  }
+
+  function handleInput(inputValue) {
+    feedHistory.push(inputValue);
+    fetchData(inputValue)
+      .then(parseData)
+      .then(handleData)
+      .then((length) => {
+        updatePosts(inputValue, length);
+      });
+  }
+
+  function handleInvalidInput(inputValue) {
+    if (feedHistory.includes(inputValue)) {
+      watchedState.errorCode = 2;
+      watchedState.isInputValid = false;
+    } else {
+      watchedState.errorCode = 1;
+      watchedState.isInputValid = false;
+    }
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const inputValue = input.value;
+    validateUrl(feedHistory, inputValue)
+      .then((result) => {
+        if (result instanceof yup.ValidationError) {
+          handleInvalidInput(inputValue);
+        } else {
+          handleInput(inputValue);
+        }
+      })
+      .catch((err) => {
+        console.error('Unhandled validation error:', err);
+      });
+  });
 };
