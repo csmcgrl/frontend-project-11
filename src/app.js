@@ -62,10 +62,16 @@ export default () => {
 
   function fetchData(inputValue) {
     const url = buildUrl(inputValue);
-    return fetch(url).then((response) => {
-      if (response.ok) return response.json();
-      throw new Error('Network response was not ok.');
-    });
+    return fetch(url)
+      .then((response) => {
+        if (response.ok) return response.json();
+        throw new Error('Network response was not ok.');
+      })
+      .catch((error) => {
+        watchedState.errorCode = 4;
+        watchedState.isInputValid = false;
+        throw error;
+      });
   }
 
   function renderPosts(items) {
