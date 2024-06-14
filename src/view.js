@@ -20,11 +20,11 @@ const state = {
   errorCode: null,
   isInputValid: undefined,
 };
-function setTranslations(formElements, i18n) {
-  formElements.header.innerText = i18n.t('rss_aggregator');
-  formElements.headerDesc.innerText = i18n.t('start_reading');
-  formElements.linkPlaceholder.innerText = i18n.t('link_placeholder');
-  formElements.example.innerText = i18n.t('example_text');
+function setTranslations(formElements, i18nElement) {
+  formElements.header.innerText = i18nElement.t('rss_aggregator');
+  formElements.headerDesc.innerText = i18nElement.t('start_reading');
+  formElements.linkPlaceholder.innerText = i18nElement.t('link_placeholder');
+  formElements.example.innerText = i18nElement.t('example_text');
   // elements.addBtn.innerText = i18n.t('add_button');
   // elements.posts.innerText = i18n.t('posts');
   // elements.feeds.innerText = i18n.t('feeds');
@@ -66,9 +66,11 @@ const render = () => {
   feedback.textContent = i18n.t(`${state.errorCode}`);
   feedback.classList.remove('text-danger');
 
-  state.errorCode === 0
-    ? feedback.classList.add('text-success')
-    : feedback.classList.add('text-danger');
+  if (state.errorCode === 0) {
+    feedback.classList.add('text-success');
+  } else {
+    feedback.classList.add('text-danger');
+  }
 
   input.classList.remove('is-invalid');
   if (!state.isInputValid) {

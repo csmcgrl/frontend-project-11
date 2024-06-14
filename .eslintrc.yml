@@ -12,3 +12,5 @@ rules:
   no-param-reassign: 0
   js: 0
   comma-dangle: off
+  no-use-before-define: 'off'
+  consistent-return: 'off'

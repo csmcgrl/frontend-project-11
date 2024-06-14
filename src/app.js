@@ -72,11 +72,11 @@ export default () => {
     const postsList = makeList(postsSection, 'Посты');
 
     let id = 0;
-    items.map((item) => {
+    items.forEach((item) => {
       const extractedText = extractCdataContent(item.title);
       const listItem = createOnePost(id, item.link, extractedText);
       postsList.prepend(listItem);
-      id++;
+      id += id;
     });
     return items.length;
   }
@@ -107,21 +107,17 @@ export default () => {
       return length;
     }
   }
-
   function makeList(section, name) {
     if (section.childNodes.length === 0) {
       return createContainer(`${name}`, section);
-    } else {
-      const lists = document.querySelectorAll(
-        'ul.list-group.border-0.rounded-0'
-      );
-      return (
-        Array.from(lists).find((list) => {
-          const title = list.parentElement.querySelector('.card-title');
-          return title && title.textContent.includes(name);
-        }) || createContainer(`${name}`, section)
-      );
     }
+    const lists = document.querySelectorAll('ul.list-group.border-0.rounded-0');
+    return (
+      Array.from(lists).find((list) => {
+        const title = list.parentElement.querySelector('.card-title');
+        return title && title.textContent.includes(name);
+      }) || createContainer(`${name}`, section)
+    );
   }
 
   function extractCdataContent(cdata) {
