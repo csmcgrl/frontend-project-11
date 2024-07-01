@@ -5,13 +5,27 @@ import watchedState from './view.js';
 import buildUrl from './utils/proxy.js';
 import validateUrl from './utils/validation.js';
 import parseData from './utils/parser.js';
+import { initLocal } from './local.js';
 
 export default () => {
-  const input = document.getElementById('url-input');
-  const form = document.querySelector('form');
+  const elements = {
+    header: document.querySelector('h1'),
+    headerDesc: document.querySelector('p.lead'),
+    linkPlaceholder: document.getElementsByTagName('label')[0],
+    example: document.querySelector('p.mt-2.mb-0.text-muted'),
+    addBtn: document.querySelector('button[type="submit"]'),
+    posts: document.getElementsByTagName('h2')[0],
+    feeds: document.getElementsByTagName('h2')[1],
+    readFull: document.querySelector('button.btn-primary.full-article'),
+    closeModalBtn: document.querySelector('button.btn-secondary'),
+    input: document.getElementById('url-input'),
+    form: document.querySelector('form'),
+    postsSection: document.getElementsByClassName('posts')[0],
+    feedsSection: document.getElementsByClassName('feeds')[0],
+    lists: document.querySelectorAll('ul.list-group.border-0.rounded-0'),
+  };
 
-  const postsSection = document.getElementsByClassName('posts')[0];
-  const feedsSection = document.getElementsByClassName('feeds')[0];
+  initLocal(elements);
 
   const feedHistory = [];
   const postState = [];
@@ -24,7 +38,7 @@ export default () => {
         throw new Error('Network response was not ok.');
       })
       .catch((error) => {
-        watchedState.errorCode = 4;
+        watchedState.errorCode = 'networkErr';
         watchedState.isInputValid = false;
         throw error;
       });
@@ -32,14 +46,14 @@ export default () => {
 
   function handleData(doc) {
     if (doc.items.length === 0) {
-      watchedState.errorCode = 3;
+      watchedState.errorCode = 'invalidResourceErr';
       watchedState.isInputValid = false;
       feedHistory.pop();
     } else {
-      watchedState.errorCode = 0;
+      watchedState.errorCode = 'successLoad';
       watchedState.isInputValid = true;
-      input.value = '';
-      input.focus();
+      elements.input.value = '';
+      elements.input.focus();
 
       const length = renderPosts(doc.items);
       renderFeeds(doc.feedTitle, doc.feedDescription);
@@ -59,9 +73,8 @@ export default () => {
     if (section.childNodes.length === 0) {
       return createContainer(`${name}`, section);
     }
-    const lists = document.querySelectorAll('ul.list-group.border-0.rounded-0');
     return (
-      Array.from(lists).find((list) => {
+      Array.from(elements.lists).find((list) => {
         const title = list.parentElement.querySelector('.card-title');
         return title && title.textContent.includes(name);
       }) || createContainer(`${name}`, section)
@@ -176,7 +189,7 @@ export default () => {
   }
 
   function renderPosts(items) {
-    const postsList = makeList(postsSection, 'Посты');
+    const postsList = makeList(elements.postsSection, 'Посты');
 
     let id = 0;
     items.forEach((item) => {
@@ -189,7 +202,7 @@ export default () => {
   }
 
   function renderFeeds(feedTitle, feedDescription) {
-    const feedsList = makeList(feedsSection, 'Фиды');
+    const feedsList = makeList(elements.feedsSection, 'Фиды');
 
     const extractedFeed = extractCdataContent(feedTitle);
     const extractedFeedDesc = extractCdataContent(feedDescription);
@@ -209,18 +222,18 @@ export default () => {
 
   function handleInvalidInput(inputValue) {
     if (feedHistory.includes(inputValue)) {
-      watchedState.errorCode = 2;
+      watchedState.errorCode = 'existUrlErr';
       watchedState.isInputValid = false;
     } else {
-      watchedState.errorCode = 1;
+      watchedState.errorCode = 'invalidUrlErr';
       watchedState.isInputValid = false;
     }
   }
 
-  form.addEventListener('submit', (e) => {
+  elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const inputValue = input.value;
+    const inputValue = elements.input.value;
     validateUrl(feedHistory, inputValue)
       .then((result) => {
         if (result instanceof yup.ValidationError) {
