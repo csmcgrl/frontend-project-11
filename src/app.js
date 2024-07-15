@@ -22,7 +22,7 @@ export default () => {
     form: document.querySelector('form'),
     postsSection: document.getElementsByClassName('posts')[0],
     feedsSection: document.getElementsByClassName('feeds')[0],
-    lists: document.querySelectorAll('ul.list-group.border-0.rounded-0'),
+    // lists: document.querySelectorAll('ul.list-group.border-0.rounded-0'),
   };
 
   initLocal(elements);
@@ -45,6 +45,7 @@ export default () => {
   }
 
   function handleData(doc) {
+    console.log(doc);
     if (doc.items.length === 0) {
       watchedState.errorCode = 'invalidResourceErr';
       watchedState.isInputValid = false;
@@ -73,8 +74,9 @@ export default () => {
     if (section.childNodes.length === 0) {
       return createContainer(`${name}`, section);
     }
+    const lists = document.querySelectorAll('ul.list-group.border-0.rounded-0');
     return (
-      Array.from(elements.lists).find((list) => {
+      Array.from(lists).find((list) => {
         const title = list.parentElement.querySelector('.card-title');
         return title && title.textContent.includes(name);
       }) || createContainer(`${name}`, section)
@@ -153,6 +155,7 @@ export default () => {
   }
 
   function attachEventListeners(items) {
+    console.log(items);
     const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
     modalButtons.forEach((button) => {
       button.addEventListener('click', () => {
