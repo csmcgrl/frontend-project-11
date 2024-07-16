@@ -220,6 +220,11 @@ export default () => {
       .then(handleData)
       .then((length) => {
         updatePosts(inputValue, length);
+      })
+      .catch((error) => {
+        console.error('Parsing error:', error);
+        watchedState.errorCode = 'parseErr';
+        watchedState.isInputValid = false;
       });
   }
 
