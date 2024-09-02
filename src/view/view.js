@@ -1,5 +1,5 @@
 import onChange from 'on-change';
-import { i18n } from './local.js';
+import { i18n } from '../local.js';
 
 const input = document.getElementById('url-input');
 const feedback = document.getElementsByClassName('feedback')[0];

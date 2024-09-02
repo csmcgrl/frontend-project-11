@@ -14,3 +14,4 @@ rules:
   comma-dangle: off
   no-use-before-define: 'off'
   consistent-return: 'off'
+  implicit-arrow-linebreak: 'off'
