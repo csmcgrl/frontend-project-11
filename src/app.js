@@ -109,8 +109,10 @@ export default () => {
       })
       .catch((error) => {
         console.error('Parsing error:', error);
+        console.log('ошибка тут');
         watchedState.errorCode = 'parseErr';
-        watchedState.isInputValid = false;
+        watchedState.isInputValid = true;
+        console.log(watchedState);
       });
   }
 

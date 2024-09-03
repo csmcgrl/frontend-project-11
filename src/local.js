@@ -25,7 +25,7 @@ export const initLocal = (elements) => {
             invalidUrlErr: 'Ссылка должна быть валидным URL',
             existUrlErr: 'RSS уже существует',
             invalidResourceErr: 'Ресурс не содержит валидный RSS',
-            networkErr: 'Ошибка сети',
+            parseErr: 'Ошибка сети',
             rss_aggregator: 'RSS агрегатор',
             start_reading:
               'Начните читать RSS сегодня! Это легко, это красиво.',
