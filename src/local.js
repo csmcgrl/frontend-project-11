@@ -3,16 +3,20 @@ import i18next from 'i18next';
 export const i18n = i18next.createInstance();
 
 function setTranslations(formElements, i18nElement) {
-  formElements.header.innerText = i18nElement.t('rss_aggregator');
-  formElements.headerDesc.innerText = i18nElement.t('start_reading');
-  formElements.linkPlaceholder.innerText = i18nElement.t('link_placeholder');
-  formElements.example.innerText = i18nElement.t('example_text');
-  // formElements.addBtn.innerText = i18nElement.t('add_button');
-  // formElements.posts.innerText = i18nElement.t('posts');
-  // formElements.feeds.innerText = i18nElement.t('feeds');
-  // formElements.readFull.innerText = i18nElement.t('read_full');
-  // formElements.closeModalBtn.innerText = i18nElement.t('close_button');
+  /* вместо изменения свойств объекта, переданного в функцию
+  как параметр, создаю копию этого объекта и работаю с ней */
+  const elements = { ...formElements };
+  elements.header.innerText = i18nElement.t('rss_aggregator');
+  elements.headerDesc.innerText = i18nElement.t('start_reading');
+  elements.linkPlaceholder.innerText = i18nElement.t('link_placeholder');
+  elements.example.innerText = i18nElement.t('example_text');
+  // elements.addBtn.innerText = i18nElement.t('add_button');
+  // elements.posts.innerText = i18nElement.t('posts');
+  // elements.feeds.innerText = i18nElement.t('feeds');
+  // elements.readFull.innerText = i18nElement.t('read_full');
+  // elements.closeModalBtn.innerText = i18nElement.t('close_button');
 }
+
 export const initLocal = (elements) => {
   i18n.init(
     {

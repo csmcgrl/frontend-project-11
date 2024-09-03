@@ -47,25 +47,6 @@ export default () => {
       });
   }
 
-  function handleData(doc) {
-    console.log(doc);
-    if (doc.items.length === 0) {
-      watchedState.errorCode = 'invalidResourceErr';
-      watchedState.isInputValid = false;
-      feedHistory.pop();
-    } else {
-      watchedState.errorCode = 'successLoad';
-      watchedState.isInputValid = true;
-      elements.input.value = '';
-      elements.input.focus();
-
-      const length = renderPosts(doc.items, elements);
-      renderFeeds(doc.feedTitle, doc.feedDescription, elements);
-      attachEventListeners(doc.items);
-      return length;
-    }
-  }
-
   function attachEventListeners(items) {
     const modalButtons = document.querySelectorAll('[data-bs-toggle="modal"]');
     modalButtons.forEach((button) => {
@@ -97,6 +78,25 @@ export default () => {
         });
       });
     });
+  }
+
+  function handleData(doc) {
+    if (doc.items.length === 0) {
+      watchedState.errorCode = 'invalidResourceErr';
+      watchedState.isInputValid = false;
+      feedHistory.pop();
+      return null;
+      //  добавила, чтобы избежать ошибки линтера
+    }
+    watchedState.errorCode = 'successLoad';
+    watchedState.isInputValid = true;
+    elements.input.value = '';
+    elements.input.focus();
+
+    const length = renderPosts(doc.items, elements);
+    renderFeeds(doc.feedTitle, doc.feedDescription, elements);
+    attachEventListeners(doc.items);
+    return length;
   }
 
   function handleInput(inputValue) {

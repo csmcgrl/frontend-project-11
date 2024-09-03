@@ -1,6 +1,6 @@
-export default (cdata) =>
-  cdata
-    .replace('<![CDATA[', '')
-    .replace(']]>', '')
-    .replace(']]', '')
-    .replace('[CDATA[', '');
+// prettier-ignore
+export default (cdata) => cdata
+  .replace('<![CDATA[', '')
+  .replace(']]>', '')
+  .replace(']]', '')
+  .replace('[CDATA[', '');
