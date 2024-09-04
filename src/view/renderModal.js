@@ -8,7 +8,5 @@ export default (modalElements, items, postTitle, buttonId) => {
   postTitle.classList.add('fw-normal', 'link-secondary');
 
   updatedModalElements.modalTitle.textContent = postTitle.textContent;
-  updatedModalElements.modalBody.textContent = extractCdataContent(
-    items[buttonId].description
-  );
+  updatedModalElements.modalBody.textContent = extractCdataContent(items[buttonId].description);
 };

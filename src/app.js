@@ -66,9 +66,7 @@ export default () => {
         renderModal(modalElements, items, postTitle, buttonId);
         myModal.show();
 
-        const backdrops = document.querySelectorAll(
-          'div.modal-backdrop.fade.show'
-        );
+        const backdrops = document.querySelectorAll('div.modal-backdrop.fade.show');
 
         if (backdrops.length > 1) {
           backdrops[0].remove();

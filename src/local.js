@@ -31,8 +31,7 @@ export const initLocal = (elements) => {
             invalidResourceErr: 'Ресурс не содержит валидный RSS',
             parseErr: 'Ошибка сети',
             rss_aggregator: 'RSS агрегатор',
-            start_reading:
-              'Начните читать RSS сегодня! Это легко, это красиво.',
+            start_reading: 'Начните читать RSS сегодня! Это легко, это красиво.',
             link_placeholder: 'Ссылка RSS',
             example_text: 'Пример: https://lorem-rss.hexlet.app/feed',
             add_button: 'Добавить',
@@ -47,6 +46,6 @@ export const initLocal = (elements) => {
     () => {
       // После инициализации i18next вызываем функцию для установки переводов
       setTranslations(elements, i18n);
-    }
+    },
   );
 };
