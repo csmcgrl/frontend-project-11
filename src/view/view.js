@@ -6,7 +6,7 @@ const feedback = document.getElementsByClassName('feedback')[0];
 
 const state = {
   errorCode: null,
-  isInputValid: undefined,
+  isInputValid: undefined
 };
 
 const render = () => {

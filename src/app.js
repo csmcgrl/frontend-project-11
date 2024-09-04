@@ -25,7 +25,7 @@ export default () => {
     input: document.getElementById('url-input'),
     form: document.querySelector('form'),
     postsSection: document.getElementsByClassName('posts')[0],
-    feedsSection: document.getElementsByClassName('feeds')[0],
+    feedsSection: document.getElementsByClassName('feeds')[0]
   };
 
   initLocal(elements);
@@ -56,7 +56,7 @@ export default () => {
         const modalElements = {
           modal: document.getElementById('modal'),
           modalTitle: document.querySelector('.modal-title'),
-          modalBody: document.querySelector('.modal-body'),
+          modalBody: document.querySelector('.modal-body')
         };
 
         const postTitle = document.querySelector(`[data-id="${buttonId}"]`);
@@ -66,9 +66,7 @@ export default () => {
         renderModal(modalElements, items, postTitle, buttonId);
         myModal.show();
 
-        const backdrops = document.querySelectorAll(
-          'div.modal-backdrop.fade.show'
-        );
+        const backdrops = document.querySelectorAll('div.modal-backdrop.fade.show');
 
         if (backdrops.length > 1) {
           backdrops[0].remove();
