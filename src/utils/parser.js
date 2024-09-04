@@ -9,14 +9,21 @@ export default (data) => {
   }
 
   return {
-    rssLinks: doc.getElementsByTagName('rss').length > 0 ? doc.getElementsByTagName('rss') : null,
-    feedTitle: doc.querySelector('title') ? doc.querySelector('title').textContent : null,
-    feedDescription: doc.querySelector('description') ? doc.querySelector('description').childNodes[0].textContent : null,
+    rssLinks:
+      doc.getElementsByTagName('rss').length > 0
+        ? doc.getElementsByTagName('rss')
+        : null,
+    feedTitle: doc.querySelector('title')
+      ? doc.querySelector('title').textContent
+      : null,
+    feedDescription: doc.querySelector('description')
+      ? doc.querySelector('description').childNodes[0].textContent
+      : null,
     items: Array.from(doc.body.getElementsByTagName('item')).map((item) => ({
       title: item.querySelector('title').textContent,
       link: item.querySelector('guid').textContent,
-      description: item.querySelector('description').childNodes[0].textContent
-    }))
+      description: item.querySelector('description').childNodes[0].textContent,
+    })),
   };
 };
 // export default (data) => {
