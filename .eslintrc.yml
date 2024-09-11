@@ -18,14 +18,4 @@ rules:
   #   - js: always
   no-underscore-dangle: [2, { 'allow': ['__filename', '__dirname'] }]
   no-restricted-exports: ['error', { 'restrictedNamedExports': ['default'] }]
-  # object-curly-newline:
-  #   [
-  #     'error',
-  #     {
-  #       'ObjectExpression': { 'multiline': true, 'consistent': true },
-  #       'ObjectPattern': { 'multiline': true, 'consistent': true },
-  #       'ImportDeclaration': { 'multiline': true, 'consistent': true },
-  #       'ExportDeclaration': { 'multiline': true, 'consistent': true },
-  #     },
-  #   ]
   implicit-arrow-linebreak: ['error', 'beside']

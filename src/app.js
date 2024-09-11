@@ -26,6 +26,12 @@ export default () => {
     form: document.querySelector('form'),
     postsSection: document.getElementsByClassName('posts')[0],
     feedsSection: document.getElementsByClassName('feeds')[0],
+    //backdrops: document.querySelectorAll('div.modal-backdrop.fade.show'), //Добавила
+    modalElements: {
+      modal: document.getElementById('modal'),
+      modalTitle: document.querySelector('.modal-title'),
+      modalBody: document.querySelector('.modal-body'),
+    },
   };
 
   initLocal(elements);
@@ -53,11 +59,12 @@ export default () => {
       button.addEventListener('click', () => {
         const buttonId = button.getAttribute('data-id');
 
-        const modalElements = {
-          modal: document.getElementById('modal'),
-          modalTitle: document.querySelector('.modal-title'),
-          modalBody: document.querySelector('.modal-body'),
-        };
+        // const modalElements = {
+        //   modal: document.getElementById('modal'),
+        //   modalTitle: document.querySelector('.modal-title'),
+        //   modalBody: document.querySelector('.modal-body'),
+        // };
+        const modalElements = elements.modalElements;
 
         const postTitle = document.querySelector(`[data-id="${buttonId}"]`);
 
@@ -67,6 +74,7 @@ export default () => {
         myModal.show();
 
         const backdrops = document.querySelectorAll('div.modal-backdrop.fade.show');
+        //const backdrops = elements.backdrops; //добавила
 
         if (backdrops.length > 1) {
           backdrops[0].remove();
@@ -84,7 +92,6 @@ export default () => {
       watchedState.isInputValid = false;
       feedHistory.pop();
       return null;
-      //  добавила, чтобы избежать ошибки линтера
     }
     watchedState.errorCode = 'successLoad';
     watchedState.isInputValid = true;
