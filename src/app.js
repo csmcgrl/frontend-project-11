@@ -26,7 +26,6 @@ export default () => {
     form: document.querySelector('form'),
     postsSection: document.getElementsByClassName('posts')[0],
     feedsSection: document.getElementsByClassName('feeds')[0],
-    //backdrops: document.querySelectorAll('div.modal-backdrop.fade.show'), //Добавила
     modalElements: {
       modal: document.getElementById('modal'),
       modalTitle: document.querySelector('.modal-title'),
@@ -58,27 +57,17 @@ export default () => {
     modalButtons.forEach((button) => {
       button.addEventListener('click', () => {
         const buttonId = button.getAttribute('data-id');
-
-        // const modalElements = {
-        //   modal: document.getElementById('modal'),
-        //   modalTitle: document.querySelector('.modal-title'),
-        //   modalBody: document.querySelector('.modal-body'),
-        // };
-        const modalElements = elements.modalElements;
-
         const postTitle = document.querySelector(`[data-id="${buttonId}"]`);
 
-        const myModal = new Modal(modalElements.modal);
-
-        renderModal(modalElements, items, postTitle, buttonId);
+        const myModal = new Modal(elements.modalElements.modal);
+        renderModal(elements.modalElements, items, postTitle, buttonId);
         myModal.show();
 
         const backdrops = document.querySelectorAll('div.modal-backdrop.fade.show');
-        //const backdrops = elements.backdrops; //добавила
-
         if (backdrops.length > 1) {
           backdrops[0].remove();
         }
+
         document.addEventListener('hidden.bs.modal', () => {
           document.body.style = '';
         });
@@ -114,10 +103,8 @@ export default () => {
       })
       .catch((error) => {
         console.error('Parsing error:', error);
-        console.log('ошибка тут');
         watchedState.errorCode = 'parseErr';
         watchedState.isInputValid = true;
-        console.log(watchedState);
       });
   }
 
